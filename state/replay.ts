@@ -28,7 +28,18 @@ export function replayFromBranch(ctx: { sessionManager: { getBranch(): Iterable<
 		if (e.type !== "message") continue;
 		const msg = e.message;
 		if (msg?.role !== "toolResult" || msg.toolName !== "todo") continue;
-		if (!isTaskDetails(msg.details)) continue;
+		if (!isTaskDetails(msg.details)) {
+			// Keep the installed official-todo history usable without rewriting sessions.
+			const legacy = msg.details as { todos?: unknown[]; nextId?: number } | undefined;
+			if (!Array.isArray(legacy?.todos) || !Number.isSafeInteger(legacy.nextId) || legacy.nextId! < 1) continue;
+			const valid = legacy.todos.every((todo: any) => todo && Number.isSafeInteger(todo.id) && todo.id > 0 && typeof todo.text === "string" && typeof todo.done === "boolean");
+			if (!valid) continue;
+			result = {
+				tasks: legacy.todos.map((todo: any) => ({ id: todo.id, subject: todo.text, status: todo.done ? "completed" : "pending" })),
+				nextId: Math.max(legacy.nextId!, ...legacy.todos.map((todo: any) => todo.id + 1)),
+			};
+			continue;
+		}
 		result = {
 			tasks: msg.details.tasks.map((t) => ({ ...t })),
 			nextId: msg.details.nextId,

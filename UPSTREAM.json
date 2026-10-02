@@ -1,0 +1,8 @@
+{
+  "package": "@juicesharp/rpiv-todo",
+  "version": "2.12.0",
+  "repository": "https://github.com/juicesharp/rpiv-mono/tree/main/packages/rpiv-todo",
+  "source": "Published npm package snapshot; independent copy, not the upstream monorepo fork",
+  "originalArchive": "juicesharp-rpiv-todo-2.12.0.tgz",
+  "originalArchiveSha256": "f8df274dfc7a01ac99686f1f70f5a4998f4ff677b997d10a73365bf47beca484"
+}
